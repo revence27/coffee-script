@@ -34,11 +34,7 @@ exports.helpers = require './helpers'
 exports.compile = compile = (code, options = {}) ->
   {merge} = exports.helpers
   try
-<<<<<<< HEAD
     (parser.parse lexer.tokenize (if (options.filename or '').match /\.literatecoffee$/ then code.replace(/(^|\n)(\S)/gi, '$1#$2') else code)).compile options
-=======
-    (parser.parse lexer.tokenize code).compile merge {}, options
->>>>>>> c8059a752f2fa954655b90321b9347c764ef7ce7
   catch err
     err.message = "In #{options.filename}, #{err.message}" if options.filename
     throw err
