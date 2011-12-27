@@ -21,7 +21,7 @@ else if require.registerExtension
   require.registerExtension '.coffee', (content) -> compile content
 
 # The current CoffeeScript version number.
-exports.VERSION = '1.1.3-pre'
+exports.VERSION = '1.2.1-pre'
 
 # Words that cannot be used as identifiers in CoffeeScript code
 exports.RESERVED = RESERVED
@@ -32,8 +32,13 @@ exports.helpers = require './helpers'
 # Compile a string of CoffeeScript code to JavaScript, using the Coffee/Jison
 # compiler.
 exports.compile = compile = (code, options = {}) ->
+  {merge} = exports.helpers
   try
+<<<<<<< HEAD
     (parser.parse lexer.tokenize (if (options.filename or '').match /\.literatecoffee$/ then code.replace(/(^|\n)(\S)/gi, '$1#$2') else code)).compile options
+=======
+    (parser.parse lexer.tokenize code).compile merge {}, options
+>>>>>>> c8059a752f2fa954655b90321b9347c764ef7ce7
   catch err
     err.message = "In #{options.filename}, #{err.message}" if options.filename
     throw err
@@ -44,7 +49,7 @@ exports.tokens = (code, options) ->
 
 # Parse a string of CoffeeScript code or an array of lexed tokens, and
 # return the AST. You can then compile it by calling `.compile()` on the root,
-# or traverse it by using `.traverse()` with a callback.
+# or traverse it by using `.traverseChildren()` with a callback.
 exports.nodes = (source, options) ->
   if typeof source is 'string'
     parser.parse lexer.tokenize source, options
@@ -64,9 +69,7 @@ exports.run = (code, options) ->
   mainModule.moduleCache and= {}
 
   # Assign paths for node_modules loading
-  if process.binding('natives').module
-    {Module} = require 'module'
-    mainModule.paths = Module._nodeModulePaths path.dirname options.filename
+  mainModule.paths = require('module')._nodeModulePaths path.dirname options.filename
 
   # Compile.
   if path.extname(mainModule.filename) isnt '.coffee' or require.extensions
