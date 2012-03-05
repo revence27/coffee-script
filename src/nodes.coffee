@@ -1117,9 +1117,12 @@ exports.Assign = class Assign extends Base
   # operands are only evaluated once, even though we have to reference them
   # more than once.
   compileConditional: (o) ->
-    [left, rite] = @variable.cacheReference o
+    [left, right] = @variable.cacheReference o
+    # Disallow conditional assignment of undefined variables.
+    if left.base instanceof Literal and left.base.value != "this" and not o.scope.check left.base.value
+      throw new Error "the variable \"#{left.base.value}\" can't be assigned with #{@context} because it has not been defined."
     if "?" in @context then o.isExistentialEquals = true
-    new Op(@context[...-1], left, new Assign(rite, @value, '=') ).compile o
+    new Op(@context[...-1], left, new Assign(right, @value, '=') ).compile o
 
   # Compile the assignment from an array splice literal, using JavaScript's
   # `Array#splice` method.
@@ -1168,6 +1171,7 @@ exports.Code = class Code extends Base
     o.scope.shared  = del(o, 'sharedScope')
     o.indent        += TAB
     delete o.bare
+    delete o.isExistentialEquals
     params = []
     exprs  = []
     for name in @paramNames() # this step must be performed before the others
@@ -1230,7 +1234,7 @@ exports.Code = class Code extends Base
 # as well as be a splat, gathering up a group of parameters into an array.
 exports.Param = class Param extends Base
   constructor: (@name, @value, @splat) ->
-    if name = @name.unwrapAll().value in STRICT_PROSCRIBED
+    if (name = @name.unwrapAll().value) in STRICT_PROSCRIBED
       throw SyntaxError "parameter name \"#{name}\" is not allowed"
 
   children: ['name', 'value']
