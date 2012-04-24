@@ -586,9 +586,9 @@ exports.Call = class Call extends Base
       return """
         (function(func, args, ctor) {
         #{idt}ctor.prototype = func.prototype;
-        #{idt}var child = new ctor, result = func.apply(child, args);
-        #{idt}return typeof result === "object" ? result : child;
-        #{@tab}})(#{ @variable.compile o, LEVEL_LIST }, #{splatArgs}, function() {})
+        #{idt}var child = new ctor, result = func.apply(child, args), t = typeof result;
+        #{idt}return t == "object" || t == "function" ? result || child : child;
+        #{@tab}})(#{ @variable.compile o, LEVEL_LIST }, #{splatArgs}, function(){})
       """
     base = new Value @variable
     if (name = base.properties.pop()) and base.isComplex()
@@ -966,8 +966,6 @@ exports.Class = class Class extends Base
     @ensureConstructor name
     @body.spaced = yes
     @body.expressions.unshift @ctor unless @ctor instanceof Code
-    if decl
-      @body.expressions.unshift new Assign (new Value (new Literal name), [new Access new Literal 'name']), (new Literal "'#{name}'")
     @body.expressions.push lname
     @body.expressions.unshift @directives...
     @addBoundFunctions o
@@ -1119,7 +1117,8 @@ exports.Assign = class Assign extends Base
   compileConditional: (o) ->
     [left, right] = @variable.cacheReference o
     # Disallow conditional assignment of undefined variables.
-    if left.base instanceof Literal and left.base.value != "this" and not o.scope.check left.base.value
+    if not left.properties.length and left.base instanceof Literal and 
+           left.base.value != "this" and not o.scope.check left.base.value
       throw new Error "the variable \"#{left.base.value}\" can't be assigned with #{@context} because it has not been defined."
     if "?" in @context then o.isExistentialEquals = true
     new Op(@context[...-1], left, new Assign(right, @value, '=') ).compile o
@@ -1177,7 +1176,9 @@ exports.Code = class Code extends Base
     for name in @paramNames() # this step must be performed before the others
       unless o.scope.check name then o.scope.parameter name
     for param in @params when param.splat
-      o.scope.add p.name.value, 'var', yes for p in @params when p.name.value
+      for {name: p} in @params
+        if p.this then p = p.properties[0].name
+        if p.value then o.scope.add p.value, 'var', yes
       splats = new Assign new Value(new Arr(p.asReference o for p in @params)),
                           new Value new Literal 'arguments'
       break
@@ -1278,6 +1279,9 @@ exports.Param = class Param extends Base
       # * assignments within destructured parameters `{foo:bar}`
       if obj instanceof Assign
         names.push obj.variable.base.value
+      # * splats within destructured parameters `[xs...]`
+      else if obj instanceof Splat
+        names.push obj.name.unwrap().value
       # * destructured parameters within destructured parameters `[{a}]`
       else if obj.isArray() or obj.isObject()
         names.push @names(obj.base)...
@@ -1871,17 +1875,7 @@ exports.If = class If extends Base
     cond     = @condition.compile o, LEVEL_PAREN
     o.indent += TAB
     body     = @ensureBlock(@body)
-    bodyc    = body.compile o
-    if (
-      1 is body.expressions?.length and
-      !@elseBody and !child and
-      bodyc and cond and
-      -1 is (bodyc.indexOf '\n') and
-      80 > cond.length + bodyc.length
-    )
-      return "#{@tab}if (#{cond}) #{bodyc.replace /^\s+/, ''}"
-    bodyc    = "\n#{bodyc}\n#{@tab}" if bodyc
-    ifPart   = "if (#{cond}) {#{bodyc}}"
+    ifPart   = "if (#{cond}) {\n#{body.compile(o)}\n#{@tab}}"
     ifPart   = @tab + ifPart unless child
     return ifPart unless @elseBody
     ifPart + ' else ' + if @isChain
