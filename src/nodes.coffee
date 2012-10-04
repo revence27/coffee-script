@@ -7,7 +7,7 @@
 {RESERVED, STRICT_PROSCRIBED} = require './lexer'
 
 # Import the helpers we plan to use.
-{compact, flatten, extend, merge, del, starts, ends, last} = require './helpers'
+{compact, flatten, extend, merge, del, starts, ends, last, some} = require './helpers'
 
 exports.extend = extend  # for parser
 
@@ -325,9 +325,7 @@ exports.Literal = class Literal extends Base
     return this if @value is 'continue' and not o?.loop
 
   compileNode: (o) ->
-    code = if @isUndefined
-      if o.level >= LEVEL_ACCESS then '(void 0)' else 'void 0'
-    else if @value is 'this'
+    code = if @value is 'this'
       if o.scope.method?.bound then o.scope.method.context else @value
     else if @value.reserved
       "\"#{@value}\""
@@ -337,6 +335,23 @@ exports.Literal = class Literal extends Base
 
   toString: ->
     ' "' + @value + '"'
+
+class exports.Undefined extends Base
+  isAssignable: NO
+  isComplex: NO
+  compileNode: (o) ->
+    if o.level >= LEVEL_ACCESS then '(void 0)' else 'void 0'
+
+class exports.Null extends Base
+  isAssignable: NO
+  isComplex: NO
+  compileNode: -> "null"
+
+class exports.Bool extends Base
+  isAssignable: NO
+  isComplex: NO
+  compileNode: -> @val
+  constructor: (@val) ->
 
 #### Return
 
@@ -510,7 +525,8 @@ exports.Call = class Call extends Base
 
   # The appropriate `this` value for a `super` call.
   superThis : (o) ->
-    o.scope.method?.context or "this"
+    method = o.scope.method
+    (method and not method.klass and method.context) or "this"
 
   # Soaked chained invocations unfold into if/else ternary structures.
   unfoldSoak: (o) ->
@@ -771,7 +787,7 @@ exports.Slice = class Slice extends Base
         "#{+compiled + 1}"
       else
         compiled = to.compile o, LEVEL_ACCESS
-        "#{compiled} + 1 || 9e9"
+        "+#{compiled} + 1 || 9e9"
     ".slice(#{ fromStr }#{ toStr or '' })"
 
 #### Obj
@@ -785,14 +801,6 @@ exports.Obj = class Obj extends Base
 
   compileNode: (o) ->
     props = @properties
-    propNames = []
-    for prop in @properties
-      prop = prop.variable if prop.isComplex()
-      if prop?
-        propName = prop.unwrapAll().value.toString()
-        if propName in propNames
-          throw SyntaxError "multiple object literal properties named \"#{propName}\""
-        propNames.push propName
     return (if @front then '({})' else '{}') unless props.length
     if @generated
       for node in props when node instanceof Value
@@ -1282,18 +1290,21 @@ exports.Param = class Param extends Base
     for obj in name.objects
       # * assignments within destructured parameters `{foo:bar}`
       if obj instanceof Assign
-        names.push obj.value.base.value
+        names.push obj.value.unwrap().value
       # * splats within destructured parameters `[xs...]`
       else if obj instanceof Splat
         names.push obj.name.unwrap().value
-      # * destructured parameters within destructured parameters `[{a}]`
-      else if obj.isArray() or obj.isObject()
-        names.push @names(obj.base)...
-      # * at-params within destructured parameters `{@foo}`
-      else if obj.this
-        names.push atParam(obj)...
-      # * simple destructured parameters {foo}
-      else names.push obj.base.value
+      else if obj instanceof Value
+        # * destructured parameters within destructured parameters `[{a}]`
+        if obj.isArray() or obj.isObject()
+          names.push @names(obj.base)...
+        # * at-params within destructured parameters `{@foo}`
+        else if obj.this
+          names.push atParam(obj)...
+        # * simple destructured parameters {foo}
+        else names.push obj.base.value
+      else
+        throw SyntaxError "illegal parameter #{obj.compile()}"
     names
 
 #### Splat
