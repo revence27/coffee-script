@@ -244,8 +244,19 @@ test "Optimized range comprehensions.", ->
 
   exxes = ('x' for [0...10])
   ok exxes.join(' ') is 'x x x x x x x x x x'
-  
-  
+
+
+test "#3671: Allow step in optimized range comprehensions.", ->
+
+  exxes = ('x' for [0...10] by 2)
+  eq exxes.join(' ') , 'x x x x x'
+
+
+test "#3671: Disallow guard in optimized range comprehensions.", ->
+
+  throws -> CoffeeScript.compile "exxes = ('x' for [0...10] when a)"
+
+
 test "Loop variables should be able to reference outer variables", ->
   outer = 1
   do ->
@@ -411,7 +422,8 @@ test "#1326: `by` value is uncached", ->
   rangeCompileSimple = []
 
   #exercises For.compile
-  for v,i in a by f() then forCompile.push i
+  for v, i in a by f()
+    forCompile.push i
 
   #exercises Range.compileSimple
   rangeCompileSimple = (i for i in [0..2] by g())
@@ -472,7 +484,7 @@ test "#1910: loop index should be mutable within a loop iteration and immutable 
 
   arr = ([v, v + 1] for v in [0..5])
   iterations = 0
-  for own [v0, v1], k in arr when v0
+  for [v0, v1], k in arr when v0
     k += 3
     ++iterations
   eq 6, k
@@ -491,7 +503,7 @@ test "#2007: Return object literal from comprehension", ->
   eq 2, y.length
   eq 1, y[0].x
   eq 0, y[1].x
-  
+
 test "#2274: Allow @values as loop variables", ->
   obj = {
     item: null
@@ -502,3 +514,55 @@ test "#2274: Allow @values as loop variables", ->
   eq obj.item, null
   obj.method()
   eq obj.item, 3
+
+test "#2525, #1187, #1208, #1758, looping over an array forwards", ->
+  list = [0, 1, 2, 3, 4]
+
+  ident = (x) -> x
+
+  arrayEq (i for i in list), list
+
+  arrayEq (index for i, index in list), list
+
+  arrayEq (i for i in list by 1), list
+
+  arrayEq (i for i in list by ident 1), list
+
+  arrayEq (i for i in list by ident(1) * 2), [0, 2, 4]
+
+  arrayEq (index for i, index in list by ident(1) * 2), [0, 2, 4]
+
+test "#2525, #1187, #1208, #1758, looping over an array backwards", ->
+  list = [0, 1, 2, 3, 4]
+  backwards = [4, 3, 2, 1, 0]
+
+  ident = (x) -> x
+
+  arrayEq (i for i in list by -1), backwards
+
+  arrayEq (index for i, index in list by -1), backwards
+
+  arrayEq (i for i in list by ident -1), backwards
+
+  arrayEq (i for i in list by ident(-1) * 2), [4, 2, 0]
+
+  arrayEq (index for i, index in list by ident(-1) * 2), [4, 2, 0]
+
+test "splats in destructuring in comprehensions", ->
+  list = [[0, 1, 2], [2, 3, 4], [4, 5, 6]]
+  arrayEq (seq for [rep, seq...] in list), [[1, 2], [3, 4], [5, 6]]
+
+test "#156: expansion in destructuring in comprehensions", ->
+  list = [[0, 1, 2], [2, 3, 4], [4, 5, 6]]
+  arrayEq (last for [..., last] in list), [2, 4, 6]
+
+test "#3778: Consistently always cache for loop range boundaries and steps, even
+      if they are simple identifiers", ->
+  a = 1; arrayEq [1, 2, 3], (for n in [1, 2, 3] by  a then a = 4; n)
+  a = 1; arrayEq [1, 2, 3], (for n in [1, 2, 3] by +a then a = 4; n)
+  a = 1; arrayEq [1, 2, 3], (for n in [a..3]          then a = 4; n)
+  a = 1; arrayEq [1, 2, 3], (for n in [+a..3]         then a = 4; n)
+  a = 3; arrayEq [1, 2, 3], (for n in [1..a]          then a = 4; n)
+  a = 3; arrayEq [1, 2, 3], (for n in [1..+a]         then a = 4; n)
+  a = 1; arrayEq [1, 2, 3], (for n in [1..3] by  a    then a = 4; n)
+  a = 1; arrayEq [1, 2, 3], (for n in [1..3] by +a    then a = 4; n)

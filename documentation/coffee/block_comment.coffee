@@ -1,6 +1,4 @@
 ###
-CoffeeScript Compiler v1.3.3
+SkinnyMochaHalfCaffScript Compiler v1.0
 Released under the MIT License
 ###
-
-

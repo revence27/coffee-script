@@ -1,264 +1,880 @@
-<!DOCTYPE html>  <html> <head>   <title>command.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="browser.html">                 browser.coffee               </a>                                           <a class="source" href="cake.html">                 cake.coffee               </a>                                           <a class="source" href="coffee-script.html">                 coffee-script.coffee               </a>                                           <a class="source" href="command.html">                 command.coffee               </a>                                           <a class="source" href="grammar.html">                 grammar.coffee               </a>                                           <a class="source" href="helpers.html">                 helpers.coffee               </a>                                           <a class="source" href="index.html">                 index.coffee               </a>                                           <a class="source" href="lexer.html">                 lexer.coffee               </a>                                           <a class="source" href="nodes.html">                 nodes.coffee               </a>                                           <a class="source" href="optparse.html">                 optparse.coffee               </a>                                           <a class="source" href="repl.html">                 repl.coffee               </a>                                           <a class="source" href="rewriter.html">                 rewriter.coffee               </a>                                           <a class="source" href="scope.html">                 scope.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               command.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>The <code>coffee</code> utility. Handles command-line compilation of CoffeeScript
-into various forms: saved into <code>.js</code> files or printed to stdout, piped to
-<a href="http://javascriptlint.com/">JavaScript Lint</a> or recompiled every time the source is
-saved, printed as a token stream or as the syntax tree, or launch an
-interactive REPL.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>External dependencies.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">fs             = </span><span class="nx">require</span> <span class="s1">&#39;fs&#39;</span>
-<span class="nv">path           = </span><span class="nx">require</span> <span class="s1">&#39;path&#39;</span>
-<span class="nv">helpers        = </span><span class="nx">require</span> <span class="s1">&#39;./helpers&#39;</span>
-<span class="nv">optparse       = </span><span class="nx">require</span> <span class="s1">&#39;./optparse&#39;</span>
-<span class="nv">CoffeeScript   = </span><span class="nx">require</span> <span class="s1">&#39;./coffee-script&#39;</span>
-<span class="p">{</span><span class="nx">spawn</span><span class="p">,</span> <span class="nx">exec</span><span class="p">}</span>  <span class="o">=</span> <span class="nx">require</span> <span class="s1">&#39;child_process&#39;</span>
-<span class="p">{</span><span class="nx">EventEmitter</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span> <span class="s1">&#39;events&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Allow CoffeeScript to emit Node.js events.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">helpers</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">CoffeeScript</span><span class="p">,</span> <span class="k">new</span> <span class="nx">EventEmitter</span>
+<!DOCTYPE html>
 
-<span class="nv">printLine = </span><span class="nf">(line) -&gt;</span> <span class="nx">process</span><span class="p">.</span><span class="nx">stdout</span><span class="p">.</span><span class="nx">write</span> <span class="nx">line</span> <span class="o">+</span> <span class="s1">&#39;\n&#39;</span>
-<span class="nv">printWarn = </span><span class="nf">(line) -&gt;</span> <span class="nx">process</span><span class="p">.</span><span class="nx">stderr</span><span class="p">.</span><span class="nx">write</span> <span class="nx">line</span> <span class="o">+</span> <span class="s1">&#39;\n&#39;</span>
+<html>
+<head>
+  <title>command.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="browser.html">
+                  browser.coffee
+                </a>
+              
+                
+                <a class="source" href="cake.html">
+                  cake.coffee
+                </a>
+              
+                
+                <a class="source" href="coffee-script.html">
+                  coffee-script.coffee
+                </a>
+              
+                
+                <a class="source" href="command.html">
+                  command.coffee
+                </a>
+              
+                
+                <a class="source" href="grammar.html">
+                  grammar.coffee
+                </a>
+              
+                
+                <a class="source" href="helpers.html">
+                  helpers.coffee
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.coffee
+                </a>
+              
+                
+                <a class="source" href="lexer.html">
+                  lexer.coffee
+                </a>
+              
+                
+                <a class="source" href="nodes.html">
+                  nodes.coffee
+                </a>
+              
+                
+                <a class="source" href="optparse.html">
+                  optparse.coffee
+                </a>
+              
+                
+                <a class="source" href="register.html">
+                  register.coffee
+                </a>
+              
+                
+                <a class="source" href="repl.html">
+                  repl.coffee
+                </a>
+              
+                
+                <a class="source" href="rewriter.html">
+                  rewriter.coffee
+                </a>
+              
+                
+                <a class="source" href="scope.html">
+                  scope.litcoffee
+                </a>
+              
+                
+                <a class="source" href="sourcemap.html">
+                  sourcemap.litcoffee
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>command.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>The <code>coffee</code> utility. Handles command-line compilation of CoffeeScript
+into various forms: saved into <code>.js</code> files or printed to stdout
+or recompiled every time the source is saved,
+printed as a token stream or as the syntax tree, or launch an
+interactive REPL.</p>
 
-<span class="nv">hidden = </span><span class="nf">(file) -&gt;</span> <span class="o">/^</span><span class="err">\</span><span class="p">.</span><span class="o">|~</span><span class="nx">$</span><span class="err">/.test file</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>The help banner that is printed when <code>coffee</code> is called without arguments.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">BANNER = </span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">  Usage: coffee [options] path/to/script.coffee -- [args]</span>
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>External dependencies.</p>
 
-<span class="s1">  If called without options, `coffee` will run your script.</span>
-<span class="s1">&#39;&#39;&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>The list of all the valid option flags that <code>coffee</code> knows how to handle.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">SWITCHES = </span><span class="p">[</span>
-  <span class="p">[</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="s1">&#39;--bare&#39;</span><span class="p">,</span>            <span class="s1">&#39;compile without a top-level function wrapper&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--compile&#39;</span><span class="p">,</span>         <span class="s1">&#39;compile to JavaScript and save as .js files&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-e&#39;</span><span class="p">,</span> <span class="s1">&#39;--eval&#39;</span><span class="p">,</span>            <span class="s1">&#39;pass a string from the command line as input&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span>            <span class="s1">&#39;display this help message&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--interactive&#39;</span><span class="p">,</span>     <span class="s1">&#39;run an interactive CoffeeScript REPL&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="s1">&#39;--join [FILE]&#39;</span><span class="p">,</span>     <span class="s1">&#39;concatenate the source CoffeeScript before compiling&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--lint&#39;</span><span class="p">,</span>            <span class="s1">&#39;pipe the compiled JavaScript through JavaScript Lint&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span> <span class="s1">&#39;--nodes&#39;</span><span class="p">,</span>           <span class="s1">&#39;print out the parse tree that the parser produces&#39;</span><span class="p">]</span>
-  <span class="p">[</span>      <span class="s1">&#39;--nodejs [ARGS]&#39;</span><span class="p">,</span>   <span class="s1">&#39;pass options directly to the &quot;node&quot; binary&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--output [DIR]&#39;</span><span class="p">,</span>    <span class="s1">&#39;set the output directory for compiled JavaScript&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--print&#39;</span><span class="p">,</span>           <span class="s1">&#39;print out the compiled JavaScript&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--require [FILE*]&#39;</span><span class="p">,</span> <span class="s1">&#39;require a library before executing your script&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--stdio&#39;</span><span class="p">,</span>           <span class="s1">&#39;listen for and compile scripts over stdio&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="s1">&#39;--tokens&#39;</span><span class="p">,</span>          <span class="s1">&#39;print out the tokens that the lexer/rewriter produce&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">,</span>         <span class="s1">&#39;display the version number&#39;</span><span class="p">]</span>
-  <span class="p">[</span><span class="s1">&#39;-w&#39;</span><span class="p">,</span> <span class="s1">&#39;--watch&#39;</span><span class="p">,</span>           <span class="s1">&#39;watch scripts for changes and rerun commands&#39;</span><span class="p">]</span>
-<span class="p">]</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Top-level objects shared by all the functions.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">opts         = </span><span class="p">{}</span>
-<span class="nv">sources      = </span><span class="p">[]</span>
-<span class="nv">sourceCode   = </span><span class="p">[]</span>
-<span class="nv">notSources   = </span><span class="p">{}</span>
-<span class="nv">watchers     = </span><span class="p">{}</span>
-<span class="nv">optionParser = </span><span class="kc">null</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Run <code>coffee</code> by parsing passed options and determining what action to take.
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>fs             = <span class="hljs-built_in">require</span> <span class="hljs-string">'fs'</span>
+path           = <span class="hljs-built_in">require</span> <span class="hljs-string">'path'</span>
+helpers        = <span class="hljs-built_in">require</span> <span class="hljs-string">'./helpers'</span>
+optparse       = <span class="hljs-built_in">require</span> <span class="hljs-string">'./optparse'</span>
+CoffeeScript   = <span class="hljs-built_in">require</span> <span class="hljs-string">'./coffee-script'</span>
+{spawn, exec}  = <span class="hljs-built_in">require</span> <span class="hljs-string">'child_process'</span>
+{EventEmitter} = <span class="hljs-built_in">require</span> <span class="hljs-string">'events'</span>
+
+useWinPathSep  = path.sep <span class="hljs-keyword">is</span> <span class="hljs-string">'\\'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Allow CoffeeScript to emit Node.js events.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>helpers.extend CoffeeScript, <span class="hljs-keyword">new</span> EventEmitter
+
+<span class="hljs-function"><span class="hljs-title">printLine</span> = <span class="hljs-params">(line)</span> -&gt;</span> process.stdout.write line + <span class="hljs-string">'\n'</span>
+<span class="hljs-function"><span class="hljs-title">printWarn</span> = <span class="hljs-params">(line)</span> -&gt;</span> process.stderr.write line + <span class="hljs-string">'\n'</span>
+
+<span class="hljs-function"><span class="hljs-title">hidden</span> = <span class="hljs-params">(file)</span> -&gt;</span> <span class="hljs-regexp">/^\.|~$/</span>.test file</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>The help banner that is printed in conjunction with <code>-h</code>/<code>--help</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BANNER = <span class="hljs-string">'''
+  Usage: coffee [options] path/to/script.coffee -- [args]
+
+  If called without options, `coffee` will run your script.
+'''</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>The list of all the valid option flags that <code>coffee</code> knows how to handle.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>SWITCHES = [
+  [<span class="hljs-string">'-b'</span>, <span class="hljs-string">'--bare'</span>,            <span class="hljs-string">'compile without a top-level function wrapper'</span>]
+  [<span class="hljs-string">'-c'</span>, <span class="hljs-string">'--compile'</span>,         <span class="hljs-string">'compile to JavaScript and save as .js files'</span>]
+  [<span class="hljs-string">'-e'</span>, <span class="hljs-string">'--eval'</span>,            <span class="hljs-string">'pass a string from the command line as input'</span>]
+  [<span class="hljs-string">'-h'</span>, <span class="hljs-string">'--help'</span>,            <span class="hljs-string">'display this help message'</span>]
+  [<span class="hljs-string">'-i'</span>, <span class="hljs-string">'--interactive'</span>,     <span class="hljs-string">'run an interactive CoffeeScript REPL'</span>]
+  [<span class="hljs-string">'-j'</span>, <span class="hljs-string">'--join [FILE]'</span>,     <span class="hljs-string">'concatenate the source CoffeeScript before compiling'</span>]
+  [<span class="hljs-string">'-m'</span>, <span class="hljs-string">'--map'</span>,             <span class="hljs-string">'generate source map and save as .js.map files'</span>]
+  [<span class="hljs-string">'-n'</span>, <span class="hljs-string">'--nodes'</span>,           <span class="hljs-string">'print out the parse tree that the parser produces'</span>]
+  [      <span class="hljs-string">'--nodejs [ARGS]'</span>,   <span class="hljs-string">'pass options directly to the "node" binary'</span>]
+  [      <span class="hljs-string">'--no-header'</span>,       <span class="hljs-string">'suppress the "Generated by" header'</span>]
+  [<span class="hljs-string">'-o'</span>, <span class="hljs-string">'--output [DIR]'</span>,    <span class="hljs-string">'set the output directory for compiled JavaScript'</span>]
+  [<span class="hljs-string">'-p'</span>, <span class="hljs-string">'--print'</span>,           <span class="hljs-string">'print out the compiled JavaScript'</span>]
+  [<span class="hljs-string">'-r'</span>, <span class="hljs-string">'--require [MODULE*]'</span>, <span class="hljs-string">'require the given module before eval or REPL'</span>]
+  [<span class="hljs-string">'-s'</span>, <span class="hljs-string">'--stdio'</span>,           <span class="hljs-string">'listen for and compile scripts over stdio'</span>]
+  [<span class="hljs-string">'-l'</span>, <span class="hljs-string">'--literate'</span>,        <span class="hljs-string">'treat stdio as literate style coffee-script'</span>]
+  [<span class="hljs-string">'-t'</span>, <span class="hljs-string">'--tokens'</span>,          <span class="hljs-string">'print out the tokens that the lexer/rewriter produce'</span>]
+  [<span class="hljs-string">'-v'</span>, <span class="hljs-string">'--version'</span>,         <span class="hljs-string">'display the version number'</span>]
+  [<span class="hljs-string">'-w'</span>, <span class="hljs-string">'--watch'</span>,           <span class="hljs-string">'watch scripts for changes and rerun commands'</span>]
+]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Top-level objects shared by all the functions.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>opts         = {}
+sources      = []
+sourceCode   = []
+notSources   = {}
+watchedDirs  = {}
+optionParser = <span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Run <code>coffee</code> by parsing passed options and determining what action to take.
 Many flags cause us to divert before compiling anything. Flags passed after
-<code>--</code> will be passed verbatim to your script as arguments in <code>process.argv</code></p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">exports.run = </span><span class="o">-&gt;</span>
-  <span class="nx">parseOptions</span><span class="p">()</span>
-  <span class="k">return</span> <span class="nx">forkNode</span><span class="p">()</span>                      <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">nodejs</span>
-  <span class="k">return</span> <span class="nx">usage</span><span class="p">()</span>                         <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">help</span>
-  <span class="k">return</span> <span class="nx">version</span><span class="p">()</span>                       <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">version</span>
-  <span class="nx">loadRequires</span><span class="p">()</span>                         <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">require</span>
-  <span class="k">return</span> <span class="nx">require</span> <span class="s1">&#39;./repl&#39;</span>                <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">interactive</span>
-  <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">watch</span> <span class="o">and</span> <span class="o">!</span><span class="nx">fs</span><span class="p">.</span><span class="nx">watch</span>
-    <span class="k">return</span> <span class="nx">printWarn</span> <span class="s2">&quot;The --watch feature depends on Node v0.6.0+. You are running #{process.version}.&quot;</span>
-  <span class="k">return</span> <span class="nx">compileStdio</span><span class="p">()</span>                  <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">stdio</span>
-  <span class="k">return</span> <span class="nx">compileScript</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nb">eval</span>
-  <span class="k">return</span> <span class="nx">require</span> <span class="s1">&#39;./repl&#39;</span>                <span class="nx">unless</span> <span class="nx">sources</span><span class="p">.</span><span class="nx">length</span>
-  <span class="nv">literals = </span><span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">run</span> <span class="k">then</span> <span class="nx">sources</span><span class="p">.</span><span class="nx">splice</span> <span class="mi">1</span> <span class="k">else</span> <span class="p">[]</span>
-  <span class="nv">process.argv = </span><span class="nx">process</span><span class="p">.</span><span class="nx">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="mi">1</span><span class="p">].</span><span class="nx">concat</span> <span class="nx">literals</span>
-  <span class="nx">process</span><span class="p">.</span><span class="nx">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;coffee&#39;</span>
-  <span class="nv">process.execPath = </span><span class="nx">require</span><span class="p">.</span><span class="nx">main</span><span class="p">.</span><span class="nx">filename</span>
-  <span class="k">for</span> <span class="nx">source</span> <span class="k">in</span> <span class="nx">sources</span>
-    <span class="nx">compilePath</span> <span class="nx">source</span><span class="p">,</span> <span class="kc">yes</span><span class="p">,</span> <span class="nx">path</span><span class="p">.</span><span class="nx">normalize</span> <span class="nx">source</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Compile a path, which could be a script or a directory. If a directory
-is passed, recursively compile all '.coffee' extension source files in it
-and all subdirectories.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">compilePath = </span><span class="nf">(source, topLevel, base) -&gt;</span>
-  <span class="nx">fs</span><span class="p">.</span><span class="nx">stat</span> <span class="nx">source</span><span class="p">,</span> <span class="nf">(err, stats) -&gt;</span>
-    <span class="k">throw</span> <span class="nx">err</span> <span class="k">if</span> <span class="nx">err</span> <span class="o">and</span> <span class="nx">err</span><span class="p">.</span><span class="nx">code</span> <span class="o">isnt</span> <span class="s1">&#39;ENOENT&#39;</span>
-    <span class="k">if</span> <span class="nx">err</span><span class="o">?</span><span class="p">.</span><span class="nx">code</span> <span class="o">is</span> <span class="s1">&#39;ENOENT&#39;</span>
-      <span class="k">if</span> <span class="nx">topLevel</span> <span class="o">and</span> <span class="nx">source</span><span class="p">[</span><span class="o">-</span><span class="mi">7</span><span class="p">..]</span> <span class="o">isnt</span> <span class="s1">&#39;.coffee&#39;</span>
-        <span class="nv">source = </span><span class="nx">sources</span><span class="p">[</span><span class="nx">sources</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">source</span><span class="p">)]</span> <span class="o">=</span> <span class="s2">&quot;#{source}.coffee&quot;</span>
-        <span class="k">return</span> <span class="nx">compilePath</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">topLevel</span><span class="p">,</span> <span class="nx">base</span>
-      <span class="k">if</span> <span class="nx">topLevel</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span> <span class="s2">&quot;File not found: #{source}&quot;</span>
-        <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span> <span class="mi">1</span>
-      <span class="k">return</span>
-    <span class="k">if</span> <span class="nx">stats</span><span class="p">.</span><span class="nx">isDirectory</span><span class="p">()</span>
-      <span class="nx">watchDir</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">base</span> <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">watch</span>
-      <span class="nx">fs</span><span class="p">.</span><span class="nx">readdir</span> <span class="nx">source</span><span class="p">,</span> <span class="nf">(err, files) -&gt;</span>
-        <span class="k">throw</span> <span class="nx">err</span> <span class="k">if</span> <span class="nx">err</span> <span class="o">and</span> <span class="nx">err</span><span class="p">.</span><span class="nx">code</span> <span class="o">isnt</span> <span class="s1">&#39;ENOENT&#39;</span>
-        <span class="k">return</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span><span class="p">.</span><span class="nx">code</span> <span class="o">is</span> <span class="s1">&#39;ENOENT&#39;</span>
-        <span class="nv">index = </span><span class="nx">sources</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">source</span>
-        <span class="nv">files = </span><span class="nx">files</span><span class="p">.</span><span class="nx">filter</span> <span class="nf">(file) -&gt;</span> <span class="o">not</span> <span class="nx">hidden</span> <span class="nx">file</span>
-        <span class="nx">sources</span><span class="p">[</span><span class="nx">index</span><span class="p">..</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">file</span> <span class="k">for</span> <span class="nx">file</span> <span class="k">in</span> <span class="nx">files</span><span class="p">)</span>
-        <span class="nx">sourceCode</span><span class="p">[</span><span class="nx">index</span><span class="p">..</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="nx">files</span><span class="p">.</span><span class="nx">map</span> <span class="o">-&gt;</span> <span class="kc">null</span>
-        <span class="nx">files</span><span class="p">.</span><span class="nx">forEach</span> <span class="nf">(file) -&gt;</span>
-          <span class="nx">compilePath</span> <span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">file</span><span class="p">),</span> <span class="kc">no</span><span class="p">,</span> <span class="nx">base</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="nx">topLevel</span> <span class="o">or</span> <span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="o">is</span> <span class="s1">&#39;.coffee&#39;</span>
-      <span class="nx">watch</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">base</span> <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">watch</span>
-      <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span> <span class="nx">source</span><span class="p">,</span> <span class="nf">(err, code) -&gt;</span>
-        <span class="k">throw</span> <span class="nx">err</span> <span class="k">if</span> <span class="nx">err</span> <span class="o">and</span> <span class="nx">err</span><span class="p">.</span><span class="nx">code</span> <span class="o">isnt</span> <span class="s1">&#39;ENOENT&#39;</span>
-        <span class="k">return</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span><span class="p">.</span><span class="nx">code</span> <span class="o">is</span> <span class="s1">&#39;ENOENT&#39;</span>
-        <span class="nx">compileScript</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">code</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span> <span class="nx">base</span><span class="p">)</span>
-    <span class="k">else</span>
-      <span class="nx">notSources</span><span class="p">[</span><span class="nx">source</span><span class="p">]</span> <span class="o">=</span> <span class="kc">yes</span>
-      <span class="nx">removeSource</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">base</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Compile a single source script, containing the given code, according to the
+<code>--</code> will be passed verbatim to your script as arguments in <code>process.argv</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">exports</span>.<span class="hljs-function"><span class="hljs-title">run</span> = -&gt;</span>
+  parseOptions()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Make the REPL <em>CLI</em> use the global context so as to (a) be consistent with the
+<code>node</code> REPL CLI and, therefore, (b) make packages that modify native prototypes
+(such as ‘colors’ and ‘sugar’) work as expected.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  replCliOpts = <span class="hljs-attribute">useGlobal</span>: <span class="hljs-literal">yes</span>
+  opts.prelude = makePrelude opts.<span class="hljs-built_in">require</span>       <span class="hljs-keyword">if</span> opts.<span class="hljs-built_in">require</span>
+  replCliOpts.prelude = opts.prelude
+  <span class="hljs-keyword">return</span> forkNode()                             <span class="hljs-keyword">if</span> opts.nodejs
+  <span class="hljs-keyword">return</span> usage()                                <span class="hljs-keyword">if</span> opts.help
+  <span class="hljs-keyword">return</span> version()                              <span class="hljs-keyword">if</span> opts.version
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">require</span>(<span class="hljs-string">'./repl'</span>).start(replCliOpts)   <span class="hljs-keyword">if</span> opts.interactive
+  <span class="hljs-keyword">return</span> compileStdio()                         <span class="hljs-keyword">if</span> opts.stdio
+  <span class="hljs-keyword">return</span> compileScript <span class="hljs-literal">null</span>, opts.arguments[<span class="hljs-number">0</span>]  <span class="hljs-keyword">if</span> opts.eval
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">require</span>(<span class="hljs-string">'./repl'</span>).start(replCliOpts)   <span class="hljs-keyword">unless</span> opts.arguments.length
+  literals = <span class="hljs-keyword">if</span> opts.run <span class="hljs-keyword">then</span> opts.arguments.splice <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> []
+  process.argv = process.argv[<span class="hljs-number">0.</span><span class="hljs-number">.1</span>].concat literals
+  process.argv[<span class="hljs-number">0</span>] = <span class="hljs-string">'coffee'</span>
+
+  opts.output = path.resolve opts.output  <span class="hljs-keyword">if</span> opts.output
+  <span class="hljs-keyword">if</span> opts.join
+    opts.join = path.resolve opts.join
+    <span class="hljs-built_in">console</span>.error <span class="hljs-string">'''
+
+    The --join option is deprecated and will be removed in a future version.
+
+    If for some reason it's necessary to share local variables between files,
+    replace...
+
+        $ coffee --compile --join bundle.js -- a.coffee b.coffee c.coffee
+
+    with...
+
+        $ cat a.coffee b.coffee c.coffee | coffee --compile --stdio &gt; bundle.js
+
+    '''</span>
+  <span class="hljs-keyword">for</span> source <span class="hljs-keyword">in</span> opts.arguments
+    source = path.resolve source
+    compilePath source, <span class="hljs-literal">yes</span>, source
+
+<span class="hljs-function"><span class="hljs-title">makePrelude</span> = <span class="hljs-params">(requires)</span> -&gt;</span>
+  requires.map <span class="hljs-function"><span class="hljs-params">(<span class="hljs-built_in">module</span>)</span> -&gt;</span>
+    [_, name, <span class="hljs-built_in">module</span>] = match <span class="hljs-keyword">if</span> match = <span class="hljs-built_in">module</span>.match(<span class="hljs-regexp">/^(.*)=(.*)$/</span>)
+    name ||= helpers.baseFileName <span class="hljs-built_in">module</span>, <span class="hljs-literal">yes</span>, useWinPathSep
+    <span class="hljs-string">"<span class="hljs-subst">#{name}</span> = require('<span class="hljs-subst">#{<span class="hljs-built_in">module</span>}</span>')"</span>
+  .join <span class="hljs-string">';'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Compile a path, which could be a script or a directory. If a directory
+is passed, recursively compile all ‘.coffee’, ‘.litcoffee’, and ‘.coffee.md’
+extension source files in it and all subdirectories.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">compilePath</span> = <span class="hljs-params">(source, topLevel, base)</span> -&gt;</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> source <span class="hljs-keyword">in</span> sources   <span class="hljs-keyword">or</span>
+            watchedDirs[source] <span class="hljs-keyword">or</span>
+            <span class="hljs-keyword">not</span> topLevel <span class="hljs-keyword">and</span> (notSources[source] <span class="hljs-keyword">or</span> hidden source)
+  <span class="hljs-keyword">try</span>
+    stats = fs.statSync source
+  <span class="hljs-keyword">catch</span> err
+    <span class="hljs-keyword">if</span> err.code <span class="hljs-keyword">is</span> <span class="hljs-string">'ENOENT'</span>
+      <span class="hljs-built_in">console</span>.error <span class="hljs-string">"File not found: <span class="hljs-subst">#{source}</span>"</span>
+      process.exit <span class="hljs-number">1</span>
+    <span class="hljs-keyword">throw</span> err
+  <span class="hljs-keyword">if</span> stats.isDirectory()
+    <span class="hljs-keyword">if</span> path.basename(source) <span class="hljs-keyword">is</span> <span class="hljs-string">'node_modules'</span>
+      notSources[source] = <span class="hljs-literal">yes</span>
+      <span class="hljs-keyword">return</span>
+    <span class="hljs-keyword">if</span> opts.run
+      compilePath findDirectoryIndex(source), topLevel, base
+      <span class="hljs-keyword">return</span>
+    watchDir source, base <span class="hljs-keyword">if</span> opts.watch
+    <span class="hljs-keyword">try</span>
+      files = fs.readdirSync source
+    <span class="hljs-keyword">catch</span> err
+      <span class="hljs-keyword">if</span> err.code <span class="hljs-keyword">is</span> <span class="hljs-string">'ENOENT'</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">else</span> <span class="hljs-keyword">throw</span> err
+    <span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> files
+      compilePath (path.join source, file), <span class="hljs-literal">no</span>, base
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> topLevel <span class="hljs-keyword">or</span> helpers.isCoffee source
+    sources.push source
+    sourceCode.push <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">delete</span> notSources[source]
+    watch source, base <span class="hljs-keyword">if</span> opts.watch
+    <span class="hljs-keyword">try</span>
+      code = fs.readFileSync source
+    <span class="hljs-keyword">catch</span> err
+      <span class="hljs-keyword">if</span> err.code <span class="hljs-keyword">is</span> <span class="hljs-string">'ENOENT'</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">else</span> <span class="hljs-keyword">throw</span> err
+    compileScript(source, code.toString(), base)
+  <span class="hljs-keyword">else</span>
+    notSources[source] = <span class="hljs-literal">yes</span>
+
+<span class="hljs-function"><span class="hljs-title">findDirectoryIndex</span> = <span class="hljs-params">(source)</span> -&gt;</span>
+  <span class="hljs-keyword">for</span> ext <span class="hljs-keyword">in</span> CoffeeScript.FILE_EXTENSIONS
+    index = path.join source, <span class="hljs-string">"index<span class="hljs-subst">#{ext}</span>"</span>
+    <span class="hljs-keyword">try</span>
+      <span class="hljs-keyword">return</span> index <span class="hljs-keyword">if</span> (fs.statSync index).isFile()
+    <span class="hljs-keyword">catch</span> err
+      <span class="hljs-keyword">throw</span> err <span class="hljs-keyword">unless</span> err.code <span class="hljs-keyword">is</span> <span class="hljs-string">'ENOENT'</span>
+  <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Missing index.coffee or index.litcoffee in <span class="hljs-subst">#{source}</span>"</span>
+  process.exit <span class="hljs-number">1</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Compile a single source script, containing the given code, according to the
 requested options. If evaluating the script directly sets <code>__filename</code>,
-<code>__dirname</code> and <code>module.filename</code> to be correct relative to the script's path.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">compileScript = </span><span class="nf">(file, input, base) -&gt;</span>
-  <span class="nv">o = </span><span class="nx">opts</span>
-  <span class="nv">options = </span><span class="nx">compileOptions</span> <span class="nx">file</span>
-  <span class="k">try</span>
-    <span class="nv">t = task = </span><span class="p">{</span><span class="nx">file</span><span class="p">,</span> <span class="nx">input</span><span class="p">,</span> <span class="nx">options</span><span class="p">}</span>
-    <span class="nx">CoffeeScript</span><span class="p">.</span><span class="nx">emit</span> <span class="s1">&#39;compile&#39;</span><span class="p">,</span> <span class="nx">task</span>
-    <span class="k">if</span>      <span class="nx">o</span><span class="p">.</span><span class="nx">tokens</span>      <span class="k">then</span> <span class="nx">printTokens</span> <span class="nx">CoffeeScript</span><span class="p">.</span><span class="nx">tokens</span> <span class="nx">t</span><span class="p">.</span><span class="nx">input</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">nodes</span>       <span class="k">then</span> <span class="nx">printLine</span> <span class="nx">CoffeeScript</span><span class="p">.</span><span class="nx">nodes</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">input</span><span class="p">).</span><span class="nx">toString</span><span class="p">().</span><span class="nx">trim</span><span class="p">()</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">run</span>         <span class="k">then</span> <span class="nx">CoffeeScript</span><span class="p">.</span><span class="nx">run</span> <span class="nx">t</span><span class="p">.</span><span class="nx">input</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">options</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">join</span> <span class="o">and</span> <span class="nx">t</span><span class="p">.</span><span class="nx">file</span> <span class="o">isnt</span> <span class="nx">o</span><span class="p">.</span><span class="nx">join</span>
-      <span class="nx">sourceCode</span><span class="p">[</span><span class="nx">sources</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">file</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">input</span>
-      <span class="nx">compileJoin</span><span class="p">()</span>
-    <span class="k">else</span>
-      <span class="nv">t.output = </span><span class="nx">CoffeeScript</span><span class="p">.</span><span class="nx">compile</span> <span class="nx">t</span><span class="p">.</span><span class="nx">input</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">options</span>
-      <span class="nx">CoffeeScript</span><span class="p">.</span><span class="nx">emit</span> <span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="nx">task</span>
-      <span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">print</span>          <span class="k">then</span> <span class="nx">printLine</span> <span class="nx">t</span><span class="p">.</span><span class="nx">output</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span>
-      <span class="k">else</span> <span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">compile</span>   <span class="k">then</span> <span class="nx">writeJs</span> <span class="nx">t</span><span class="p">.</span><span class="nx">file</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">output</span><span class="p">,</span> <span class="nx">base</span>
-      <span class="k">else</span> <span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">lint</span>      <span class="k">then</span> <span class="nx">lint</span> <span class="nx">t</span><span class="p">.</span><span class="nx">file</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nx">output</span>
-  <span class="k">catch</span> <span class="nx">err</span>
-    <span class="nx">CoffeeScript</span><span class="p">.</span><span class="nx">emit</span> <span class="s1">&#39;failure&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">task</span>
-    <span class="k">return</span> <span class="k">if</span> <span class="nx">CoffeeScript</span><span class="p">.</span><span class="nx">listeners</span><span class="p">(</span><span class="s1">&#39;failure&#39;</span><span class="p">).</span><span class="nx">length</span>
-    <span class="k">return</span> <span class="nx">printLine</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span> <span class="o">+</span> <span class="s1">&#39;\x07&#39;</span> <span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">watch</span>
-    <span class="nx">printWarn</span> <span class="nx">err</span> <span class="k">instanceof</span> <span class="nb">Error</span> <span class="o">and</span> <span class="nx">err</span><span class="p">.</span><span class="nx">stack</span> <span class="o">or</span> <span class="s2">&quot;ERROR: #{err}&quot;</span>
-    <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span> <span class="mi">1</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Attach the appropriate listeners to compile scripts incoming over <strong>stdin</strong>,
-and write them back to <strong>stdout</strong>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">compileStdio = </span><span class="o">-&gt;</span>
-  <span class="nv">code = </span><span class="s1">&#39;&#39;</span>
-  <span class="nv">stdin = </span><span class="nx">process</span><span class="p">.</span><span class="nx">openStdin</span><span class="p">()</span>
-  <span class="nx">stdin</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nf">(buffer) -&gt;</span>
-    <span class="nx">code</span> <span class="o">+=</span> <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="k">if</span> <span class="nx">buffer</span>
-  <span class="nx">stdin</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-    <span class="nx">compileScript</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">code</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>If all of the source files are done being read, concatenate and compile
-them together.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">joinTimeout = </span><span class="kc">null</span>
-<span class="nv">compileJoin = </span><span class="o">-&gt;</span>
-  <span class="k">return</span> <span class="nx">unless</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">join</span>
-  <span class="nx">unless</span> <span class="nx">sourceCode</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nf">(code) -&gt;</span> <span class="nx">code</span> <span class="o">is</span> <span class="kc">null</span><span class="p">)</span>
-    <span class="nx">clearTimeout</span> <span class="nx">joinTimeout</span>
-    <span class="nv">joinTimeout = </span><span class="nx">wait</span> <span class="mi">100</span><span class="p">,</span> <span class="o">-&gt;</span>
-      <span class="nx">compileScript</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">join</span><span class="p">,</span> <span class="nx">sourceCode</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;\n&#39;</span><span class="p">),</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">join</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Load files that are to-be-required before compilation occurs.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">loadRequires = </span><span class="o">-&gt;</span>
-  <span class="nv">realFilename = </span><span class="nx">module</span><span class="p">.</span><span class="nx">filename</span>
-  <span class="nv">module.filename = </span><span class="s1">&#39;.&#39;</span>
-  <span class="nx">require</span> <span class="nx">req</span> <span class="k">for</span> <span class="nx">req</span> <span class="k">in</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">require</span>
-  <span class="nv">module.filename = </span><span class="nx">realFilename</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Watch a source CoffeeScript file using <code>fs.watch</code>, recompiling it every
+<code>__dirname</code> and <code>module.filename</code> to be correct relative to the script’s path.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">compileScript</span> = <span class="hljs-params">(file, input, base = <span class="hljs-literal">null</span>)</span> -&gt;</span>
+  o = opts
+  options = compileOptions file, base
+  <span class="hljs-keyword">try</span>
+    t = task = {file, input, options}
+    CoffeeScript.emit <span class="hljs-string">'compile'</span>, task
+    <span class="hljs-keyword">if</span> o.tokens
+      printTokens CoffeeScript.tokens t.input, t.options
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> o.nodes
+      printLine CoffeeScript.nodes(t.input, t.options).toString().trim()
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> o.run
+      CoffeeScript.register()
+      CoffeeScript.eval opts.prelude, t.options <span class="hljs-keyword">if</span> opts.prelude
+      CoffeeScript.run t.input, t.options
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> o.join <span class="hljs-keyword">and</span> t.file <span class="hljs-keyword">isnt</span> o.join
+      t.input = helpers.invertLiterate t.input <span class="hljs-keyword">if</span> helpers.isLiterate file
+      sourceCode[sources.indexOf(t.file)] = t.input
+      compileJoin()
+    <span class="hljs-keyword">else</span>
+      compiled = CoffeeScript.compile t.input, t.options
+      t.output = compiled
+      <span class="hljs-keyword">if</span> o.map
+        t.output = compiled.js
+        t.sourceMap = compiled.v3SourceMap
+
+      CoffeeScript.emit <span class="hljs-string">'success'</span>, task
+      <span class="hljs-keyword">if</span> o.<span class="hljs-built_in">print</span>
+        printLine t.output.trim()
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> o.compile <span class="hljs-keyword">or</span> o.map
+        writeJs base, t.file, t.output, options.jsPath, t.sourceMap
+  <span class="hljs-keyword">catch</span> err
+    CoffeeScript.emit <span class="hljs-string">'failure'</span>, err, task
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> CoffeeScript.listeners(<span class="hljs-string">'failure'</span>).length
+    message = err.stack <span class="hljs-keyword">or</span> <span class="hljs-string">"<span class="hljs-subst">#{err}</span>"</span>
+    <span class="hljs-keyword">if</span> o.watch
+      printLine message + <span class="hljs-string">'\x07'</span>
+    <span class="hljs-keyword">else</span>
+      printWarn message
+      process.exit <span class="hljs-number">1</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Attach the appropriate listeners to compile scripts incoming over <strong>stdin</strong>,
+and write them back to <strong>stdout</strong>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">compileStdio</span> = -&gt;</span>
+  code = <span class="hljs-string">''</span>
+  stdin = process.openStdin()
+  stdin.<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-params">(buffer)</span> -&gt;</span>
+    code += buffer.toString() <span class="hljs-keyword">if</span> buffer
+  stdin.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>,<span class="hljs-function"> -&gt;</span>
+    compileScript <span class="hljs-literal">null</span>, code</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>If all of the source files are done being read, concatenate and compile
+them together.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>joinTimeout = <span class="hljs-literal">null</span>
+<span class="hljs-function"><span class="hljs-title">compileJoin</span> = -&gt;</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">unless</span> opts.join
+  <span class="hljs-keyword">unless</span> sourceCode.some<span class="hljs-function"><span class="hljs-params">((code) -&gt; code <span class="hljs-keyword">is</span> <span class="hljs-literal">null</span>)</span>
+    <span class="hljs-title">clearTimeout</span> <span class="hljs-title">joinTimeout</span>
+    <span class="hljs-title">joinTimeout</span> = <span class="hljs-title">wait</span> 100, -&gt;</span>
+      compileScript opts.join, sourceCode.join(<span class="hljs-string">'\n'</span>), opts.join</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Watch a source CoffeeScript file using <code>fs.watch</code>, recompiling it every
 time the file is updated. May be used in combination with other options,
-such as <code>--lint</code> or <code>--print</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">watch = </span><span class="nf">(source, base) -&gt;</span>
+such as <code>--print</code>.</p>
 
-  <span class="nv">prevStats = </span><span class="kc">null</span>
-  <span class="nv">compileTimeout = </span><span class="kc">null</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">watch</span> = <span class="hljs-params">(source, base)</span> -&gt;</span>
+  watcher        = <span class="hljs-literal">null</span>
+  prevStats      = <span class="hljs-literal">null</span>
+  compileTimeout = <span class="hljs-literal">null</span>
 
-  <span class="nv">watchErr = </span><span class="nf">(e) -&gt;</span>
-    <span class="k">if</span> <span class="nx">e</span><span class="p">.</span><span class="nx">code</span> <span class="o">is</span> <span class="s1">&#39;ENOENT&#39;</span>
-      <span class="k">return</span> <span class="k">if</span> <span class="nx">sources</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="o">is</span> <span class="o">-</span><span class="mi">1</span>
-      <span class="k">try</span>
-        <span class="nx">rewatch</span><span class="p">()</span>
-        <span class="nx">compile</span><span class="p">()</span>
-      <span class="k">catch</span> <span class="nx">e</span>
-        <span class="nx">removeSource</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">base</span><span class="p">,</span> <span class="kc">yes</span>
-        <span class="nx">compileJoin</span><span class="p">()</span>
-    <span class="k">else</span> <span class="k">throw</span> <span class="nx">e</span>
+  <span class="hljs-function"><span class="hljs-title">watchErr</span> = <span class="hljs-params">(err)</span> -&gt;</span>
+    <span class="hljs-keyword">throw</span> err <span class="hljs-keyword">unless</span> err.code <span class="hljs-keyword">is</span> <span class="hljs-string">'ENOENT'</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">unless</span> source <span class="hljs-keyword">in</span> sources
+    <span class="hljs-keyword">try</span>
+      rewatch()
+      compile()
+    <span class="hljs-keyword">catch</span>
+      removeSource source, base
+      compileJoin()
 
-  <span class="nv">compile = </span><span class="o">-&gt;</span>
-    <span class="nx">clearTimeout</span> <span class="nx">compileTimeout</span>
-    <span class="nv">compileTimeout = </span><span class="nx">wait</span> <span class="mi">25</span><span class="p">,</span> <span class="o">-&gt;</span>
-      <span class="nx">fs</span><span class="p">.</span><span class="nx">stat</span> <span class="nx">source</span><span class="p">,</span> <span class="nf">(err, stats) -&gt;</span>
-        <span class="k">return</span> <span class="nx">watchErr</span> <span class="nx">err</span> <span class="k">if</span> <span class="nx">err</span>
-        <span class="k">return</span> <span class="nx">rewatch</span><span class="p">()</span> <span class="k">if</span> <span class="nx">prevStats</span> <span class="o">and</span> <span class="nx">stats</span><span class="p">.</span><span class="nx">size</span> <span class="o">is</span> <span class="nx">prevStats</span><span class="p">.</span><span class="nx">size</span> <span class="o">and</span>
-          <span class="nx">stats</span><span class="p">.</span><span class="nx">mtime</span><span class="p">.</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">is</span> <span class="nx">prevStats</span><span class="p">.</span><span class="nx">mtime</span><span class="p">.</span><span class="nx">getTime</span><span class="p">()</span>
-        <span class="nv">prevStats = </span><span class="nx">stats</span>
-        <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span> <span class="nx">source</span><span class="p">,</span> <span class="nf">(err, code) -&gt;</span>
-          <span class="k">return</span> <span class="nx">watchErr</span> <span class="nx">err</span> <span class="k">if</span> <span class="nx">err</span>
-          <span class="nx">compileScript</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">code</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span> <span class="nx">base</span><span class="p">)</span>
-          <span class="nx">rewatch</span><span class="p">()</span>
+  <span class="hljs-function"><span class="hljs-title">compile</span> = -&gt;</span>
+    clearTimeout compileTimeout
+    compileTimeout = wait <span class="hljs-number">25</span>,<span class="hljs-function"> -&gt;</span>
+      fs.stat source, <span class="hljs-function"><span class="hljs-params">(err, stats)</span> -&gt;</span>
+        <span class="hljs-keyword">return</span> watchErr err <span class="hljs-keyword">if</span> err
+        <span class="hljs-keyword">return</span> rewatch() <span class="hljs-keyword">if</span> prevStats <span class="hljs-keyword">and</span>
+                            stats.size <span class="hljs-keyword">is</span> prevStats.size <span class="hljs-keyword">and</span>
+                            stats.mtime.getTime() <span class="hljs-keyword">is</span> prevStats.mtime.getTime()
+        prevStats = stats
+        fs.readFile source, <span class="hljs-function"><span class="hljs-params">(err, code)</span> -&gt;</span>
+          <span class="hljs-keyword">return</span> watchErr err <span class="hljs-keyword">if</span> err
+          compileScript(source, code.toString(), base)
+          rewatch()
 
-  <span class="k">try</span>
-    <span class="nv">watcher = </span><span class="nx">fs</span><span class="p">.</span><span class="nx">watch</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">compile</span>
-  <span class="k">catch</span> <span class="nx">e</span>
-    <span class="nx">watchErr</span> <span class="nx">e</span>
+  <span class="hljs-function"><span class="hljs-title">startWatcher</span> = -&gt;</span>
+    watcher = fs.watch source
+    .<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, compile
+    .<span class="hljs-literal">on</span> <span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+      <span class="hljs-keyword">throw</span> err <span class="hljs-keyword">unless</span> err.code <span class="hljs-keyword">is</span> <span class="hljs-string">'EPERM'</span>
+      removeSource source, base
 
-  <span class="nv">rewatch = </span><span class="o">-&gt;</span>
-    <span class="nx">watcher</span><span class="o">?</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
-    <span class="nv">watcher = </span><span class="nx">fs</span><span class="p">.</span><span class="nx">watch</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">compile</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Watch a directory of files for new additions.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">watchDir = </span><span class="nf">(source, base) -&gt;</span>
-  <span class="nv">readdirTimeout = </span><span class="kc">null</span>
-  <span class="k">try</span>
-    <span class="nv">watcher = </span><span class="nx">fs</span><span class="p">.</span><span class="nx">watch</span> <span class="nx">source</span><span class="p">,</span> <span class="o">-&gt;</span>
-      <span class="nx">clearTimeout</span> <span class="nx">readdirTimeout</span>
-      <span class="nv">readdirTimeout = </span><span class="nx">wait</span> <span class="mi">25</span><span class="p">,</span> <span class="o">-&gt;</span>
-        <span class="nx">fs</span><span class="p">.</span><span class="nx">readdir</span> <span class="nx">source</span><span class="p">,</span> <span class="nf">(err, files) -&gt;</span>
-          <span class="k">if</span> <span class="nx">err</span>
-            <span class="k">throw</span> <span class="nx">err</span> <span class="nx">unless</span> <span class="nx">err</span><span class="p">.</span><span class="nx">code</span> <span class="o">is</span> <span class="s1">&#39;ENOENT&#39;</span>
-            <span class="nx">watcher</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
-            <span class="k">return</span> <span class="nx">unwatchDir</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">base</span>
-          <span class="k">for</span> <span class="nx">file</span> <span class="k">in</span> <span class="nx">files</span> <span class="k">when</span> <span class="o">not</span> <span class="nx">hidden</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="o">and</span> <span class="o">not</span> <span class="nx">notSources</span><span class="p">[</span><span class="nx">file</span><span class="p">]</span>
-            <span class="nv">file = </span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">file</span>
-            <span class="k">continue</span> <span class="k">if</span> <span class="nx">sources</span><span class="p">.</span><span class="nx">some</span> <span class="nf">(s) -&gt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-            <span class="nx">sources</span><span class="p">.</span><span class="nx">push</span> <span class="nx">file</span>
-            <span class="nx">sourceCode</span><span class="p">.</span><span class="nx">push</span> <span class="kc">null</span>
-            <span class="nx">compilePath</span> <span class="nx">file</span><span class="p">,</span> <span class="kc">no</span><span class="p">,</span> <span class="nx">base</span>
-  <span class="k">catch</span> <span class="nx">e</span>
-    <span class="k">throw</span> <span class="nx">e</span> <span class="nx">unless</span> <span class="nx">e</span><span class="p">.</span><span class="nx">code</span> <span class="o">is</span> <span class="s1">&#39;ENOENT&#39;</span>
+  <span class="hljs-function"><span class="hljs-title">rewatch</span> = -&gt;</span>
+    watcher?.close()
+    startWatcher()
 
-<span class="nv">unwatchDir = </span><span class="nf">(source, base) -&gt;</span>
-  <span class="nv">prevSources = </span><span class="nx">sources</span><span class="p">[..]</span>
-  <span class="nv">toRemove = </span><span class="p">(</span><span class="nx">file</span> <span class="k">for</span> <span class="nx">file</span> <span class="k">in</span> <span class="nx">sources</span> <span class="k">when</span> <span class="nx">file</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
-  <span class="nx">removeSource</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">base</span><span class="p">,</span> <span class="kc">yes</span> <span class="k">for</span> <span class="nx">file</span> <span class="k">in</span> <span class="nx">toRemove</span>
-  <span class="k">return</span> <span class="nx">unless</span> <span class="nx">sources</span><span class="p">.</span><span class="nx">some</span> <span class="nf">(s, i) -&gt;</span> <span class="nx">prevSources</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">isnt</span> <span class="nx">s</span>
-  <span class="nx">compileJoin</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Remove a file from our source list, and source code cache. Optionally remove
-the compiled JS version as well.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">removeSource = </span><span class="nf">(source, base, removeJs) -&gt;</span>
-  <span class="nv">index = </span><span class="nx">sources</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">source</span>
-  <span class="nx">sources</span><span class="p">.</span><span class="nx">splice</span> <span class="nx">index</span><span class="p">,</span> <span class="mi">1</span>
-  <span class="nx">sourceCode</span><span class="p">.</span><span class="nx">splice</span> <span class="nx">index</span><span class="p">,</span> <span class="mi">1</span>
-  <span class="k">if</span> <span class="nx">removeJs</span> <span class="o">and</span> <span class="o">not</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">join</span>
-    <span class="nv">jsPath = </span><span class="nx">outputPath</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">base</span>
-    <span class="nx">path</span><span class="p">.</span><span class="nx">exists</span> <span class="nx">jsPath</span><span class="p">,</span> <span class="nf">(exists) -&gt;</span>
-      <span class="k">if</span> <span class="nx">exists</span>
-        <span class="nx">fs</span><span class="p">.</span><span class="nx">unlink</span> <span class="nx">jsPath</span><span class="p">,</span> <span class="nf">(err) -&gt;</span>
-          <span class="k">throw</span> <span class="nx">err</span> <span class="k">if</span> <span class="nx">err</span> <span class="o">and</span> <span class="nx">err</span><span class="p">.</span><span class="nx">code</span> <span class="o">isnt</span> <span class="s1">&#39;ENOENT&#39;</span>
-          <span class="nx">timeLog</span> <span class="s2">&quot;removed #{source}&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Get the corresponding output JavaScript path for a source file.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">outputPath = </span><span class="nf">(source, base) -&gt;</span>
-  <span class="nv">filename  = </span><span class="nx">path</span><span class="p">.</span><span class="nx">basename</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">source</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span>
-  <span class="nv">srcDir    = </span><span class="nx">path</span><span class="p">.</span><span class="nx">dirname</span> <span class="nx">source</span>
-  <span class="nv">baseDir   = </span><span class="k">if</span> <span class="nx">base</span> <span class="o">is</span> <span class="s1">&#39;.&#39;</span> <span class="k">then</span> <span class="nx">srcDir</span> <span class="k">else</span> <span class="nx">srcDir</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">base</span><span class="p">.</span><span class="nx">length</span>
-  <span class="nv">dir       = </span><span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">output</span> <span class="k">then</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">output</span><span class="p">,</span> <span class="nx">baseDir</span> <span class="k">else</span> <span class="nx">srcDir</span>
-  <span class="nx">path</span><span class="p">.</span><span class="nx">join</span> <span class="nx">dir</span><span class="p">,</span> <span class="nx">filename</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Write out a JavaScript source file with the compiled code. By default, files
+  <span class="hljs-keyword">try</span>
+    startWatcher()
+  <span class="hljs-keyword">catch</span> err
+    watchErr err</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Watch a directory of files for new additions.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">watchDir</span> = <span class="hljs-params">(source, base)</span> -&gt;</span>
+  watcher        = <span class="hljs-literal">null</span>
+  readdirTimeout = <span class="hljs-literal">null</span>
+
+  <span class="hljs-function"><span class="hljs-title">startWatcher</span> = -&gt;</span>
+    watcher = fs.watch source
+    .<span class="hljs-literal">on</span> <span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+      <span class="hljs-keyword">throw</span> err <span class="hljs-keyword">unless</span> err.code <span class="hljs-keyword">is</span> <span class="hljs-string">'EPERM'</span>
+      stopWatcher()
+    .<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+      clearTimeout readdirTimeout
+      readdirTimeout = wait <span class="hljs-number">25</span>,<span class="hljs-function"> -&gt;</span>
+        <span class="hljs-keyword">try</span>
+          files = fs.readdirSync source
+        <span class="hljs-keyword">catch</span> err
+          <span class="hljs-keyword">throw</span> err <span class="hljs-keyword">unless</span> err.code <span class="hljs-keyword">is</span> <span class="hljs-string">'ENOENT'</span>
+          <span class="hljs-keyword">return</span> stopWatcher()
+        <span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> files
+          compilePath (path.join source, file), <span class="hljs-literal">no</span>, base
+
+  <span class="hljs-function"><span class="hljs-title">stopWatcher</span> = -&gt;</span>
+    watcher.close()
+    removeSourceDir source, base
+
+  watchedDirs[source] = <span class="hljs-literal">yes</span>
+  <span class="hljs-keyword">try</span>
+    startWatcher()
+  <span class="hljs-keyword">catch</span> err
+    <span class="hljs-keyword">throw</span> err <span class="hljs-keyword">unless</span> err.code <span class="hljs-keyword">is</span> <span class="hljs-string">'ENOENT'</span>
+
+<span class="hljs-function"><span class="hljs-title">removeSourceDir</span> = <span class="hljs-params">(source, base)</span> -&gt;</span>
+  <span class="hljs-keyword">delete</span> watchedDirs[source]
+  sourcesChanged = <span class="hljs-literal">no</span>
+  <span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> sources <span class="hljs-keyword">when</span> source <span class="hljs-keyword">is</span> path.dirname file
+    removeSource file, base
+    sourcesChanged = <span class="hljs-literal">yes</span>
+  compileJoin() <span class="hljs-keyword">if</span> sourcesChanged</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Remove a file from our source list, and source code cache. Optionally remove
+the compiled JS version as well.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">removeSource</span> = <span class="hljs-params">(source, base)</span> -&gt;</span>
+  index = sources.indexOf source
+  sources.splice index, <span class="hljs-number">1</span>
+  sourceCode.splice index, <span class="hljs-number">1</span>
+  <span class="hljs-keyword">unless</span> opts.join
+    silentUnlink outputPath source, base
+    silentUnlink outputPath source, base, <span class="hljs-string">'.js.map'</span>
+    timeLog <span class="hljs-string">"removed <span class="hljs-subst">#{source}</span>"</span>
+
+<span class="hljs-function"><span class="hljs-title">silentUnlink</span> = <span class="hljs-params">(path)</span> -&gt;</span>
+  <span class="hljs-keyword">try</span>
+    fs.unlinkSync path
+  <span class="hljs-keyword">catch</span> err
+    <span class="hljs-keyword">throw</span> err <span class="hljs-keyword">unless</span> err.code <span class="hljs-keyword">in</span> [<span class="hljs-string">'ENOENT'</span>, <span class="hljs-string">'EPERM'</span>]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Get the corresponding output JavaScript path for a source file.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">outputPath</span> = <span class="hljs-params">(source, base, extension=<span class="hljs-string">".js"</span>)</span> -&gt;</span>
+  basename  = helpers.baseFileName source, <span class="hljs-literal">yes</span>, useWinPathSep
+  srcDir    = path.dirname source
+  <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> opts.output
+    dir = srcDir
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> source <span class="hljs-keyword">is</span> base
+    dir = opts.output
+  <span class="hljs-keyword">else</span>
+    dir = path.join opts.output, path.relative base, srcDir
+  path.join dir, basename + extension</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Recursively mkdir, like <code>mkdir -p</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">mkdirp</span> = <span class="hljs-params">(dir, fn)</span> -&gt;</span>
+  mode = <span class="hljs-number">0</span>o777 &amp; ~process.umask()
+
+  <span class="hljs-keyword">do</span> <span class="hljs-function"><span class="hljs-title">mkdirs</span> = <span class="hljs-params">(p = dir, fn)</span> -&gt;</span>
+    fs.exists p, <span class="hljs-function"><span class="hljs-params">(exists)</span> -&gt;</span>
+      <span class="hljs-keyword">if</span> exists
+        fn()
+      <span class="hljs-keyword">else</span>
+        mkdirs path.dirname(p),<span class="hljs-function"> -&gt;</span>
+          fs.mkdir p, mode, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+            <span class="hljs-keyword">return</span> fn err <span class="hljs-keyword">if</span> err
+            fn()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Write out a JavaScript source file with the compiled code. By default, files
 are written out in <code>cwd</code> as <code>.js</code> files with the same name, but the output
-directory can be customized with <code>--output</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">writeJs = </span><span class="nf">(source, js, base) -&gt;</span>
-  <span class="nv">jsPath = </span><span class="nx">outputPath</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">base</span>
-  <span class="nv">jsDir  = </span><span class="nx">path</span><span class="p">.</span><span class="nx">dirname</span> <span class="nx">jsPath</span>
-  <span class="nv">compile = </span><span class="o">-&gt;</span>
-    <span class="nv">js = </span><span class="s1">&#39; &#39;</span> <span class="k">if</span> <span class="nx">js</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;=</span> <span class="mi">0</span>
-    <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span> <span class="nx">jsPath</span><span class="p">,</span> <span class="nx">js</span><span class="p">,</span> <span class="nf">(err) -&gt;</span>
-      <span class="k">if</span> <span class="nx">err</span>
-        <span class="nx">printLine</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span>
-      <span class="k">else</span> <span class="k">if</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">compile</span> <span class="o">and</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">watch</span>
-        <span class="nx">timeLog</span> <span class="s2">&quot;compiled #{source}&quot;</span>
-  <span class="nx">path</span><span class="p">.</span><span class="nx">exists</span> <span class="nx">jsDir</span><span class="p">,</span> <span class="nf">(exists) -&gt;</span>
-    <span class="k">if</span> <span class="nx">exists</span> <span class="k">then</span> <span class="nx">compile</span><span class="p">()</span> <span class="k">else</span> <span class="nx">exec</span> <span class="s2">&quot;mkdir -p #{jsDir}&quot;</span><span class="p">,</span> <span class="nx">compile</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Convenience for cleaner setTimeouts.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">wait = </span><span class="nf">(milliseconds, func) -&gt;</span> <span class="nx">setTimeout</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">milliseconds</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>When watching scripts, it's useful to log changes with the timestamp.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">timeLog = </span><span class="nf">(message) -&gt;</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s2">&quot;#{(new Date).toLocaleTimeString()} - #{message}&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Pipe compiled JS through JSLint (requires a working <code>jsl</code> command), printing
-any errors or warnings that arise.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">lint = </span><span class="nf">(file, js) -&gt;</span>
-  <span class="nv">printIt = </span><span class="nf">(buffer) -&gt;</span> <span class="nx">printLine</span> <span class="nx">file</span> <span class="o">+</span> <span class="s1">&#39;:\t&#39;</span> <span class="o">+</span> <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">().</span><span class="nx">trim</span><span class="p">()</span>
-  <span class="nv">conf = </span><span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">&#39;/../../extras/jsl.conf&#39;</span>
-  <span class="nv">jsl = </span><span class="nx">spawn</span> <span class="s1">&#39;jsl&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;-nologo&#39;</span><span class="p">,</span> <span class="s1">&#39;-stdin&#39;</span><span class="p">,</span> <span class="s1">&#39;-conf&#39;</span><span class="p">,</span> <span class="nx">conf</span><span class="p">]</span>
-  <span class="nx">jsl</span><span class="p">.</span><span class="nx">stdout</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nx">printIt</span>
-  <span class="nx">jsl</span><span class="p">.</span><span class="nx">stderr</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nx">printIt</span>
-  <span class="nx">jsl</span><span class="p">.</span><span class="nx">stdin</span><span class="p">.</span><span class="nx">write</span> <span class="nx">js</span>
-  <span class="nx">jsl</span><span class="p">.</span><span class="nx">stdin</span><span class="p">.</span><span class="nx">end</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Pretty-print a stream of tokens.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">printTokens = </span><span class="nf">(tokens) -&gt;</span>
-  <span class="nv">strings = </span><span class="k">for</span> <span class="nx">token</span> <span class="k">in</span> <span class="nx">tokens</span>
-    <span class="p">[</span><span class="nx">tag</span><span class="p">,</span> <span class="nx">value</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">token</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">token</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">toString</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\n/</span><span class="p">,</span> <span class="s1">&#39;\\n&#39;</span><span class="p">)]</span>
-    <span class="s2">&quot;[#{tag} #{value}]&quot;</span>
-  <span class="nx">printLine</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Use the <a href="optparse.html">OptionParser module</a> to extract all options from
-<code>process.argv</code> that are specified in <code>SWITCHES</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">parseOptions = </span><span class="o">-&gt;</span>
-  <span class="nv">optionParser  = </span><span class="k">new</span> <span class="nx">optparse</span><span class="p">.</span><span class="nx">OptionParser</span> <span class="nx">SWITCHES</span><span class="p">,</span> <span class="nx">BANNER</span>
-  <span class="nv">o = opts      = </span><span class="nx">optionParser</span><span class="p">.</span><span class="nx">parse</span> <span class="nx">process</span><span class="p">.</span><span class="nx">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">..]</span>
-  <span class="nx">o</span><span class="p">.</span><span class="nx">compile</span>     <span class="o">or=</span>  <span class="o">!!</span><span class="nx">o</span><span class="p">.</span><span class="nx">output</span>
-  <span class="nv">o.run         = </span><span class="o">not</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">compile</span> <span class="o">or</span> <span class="nx">o</span><span class="p">.</span><span class="nx">print</span> <span class="o">or</span> <span class="nx">o</span><span class="p">.</span><span class="nx">lint</span><span class="p">)</span>
-  <span class="nv">o.print       = </span><span class="o">!!</span>  <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">print</span> <span class="o">or</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nb">eval</span> <span class="o">or</span> <span class="nx">o</span><span class="p">.</span><span class="nx">stdio</span> <span class="o">and</span> <span class="nx">o</span><span class="p">.</span><span class="nx">compile</span><span class="p">))</span>
-  <span class="nv">sources       = </span><span class="nx">o</span><span class="p">.</span><span class="nx">arguments</span>
-  <span class="nx">sourceCode</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span> <span class="k">for</span> <span class="nx">source</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">sources</span>
-  <span class="k">return</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>The compile-time options to pass to the CoffeeScript compiler.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">compileOptions = </span><span class="nf">(filename) -&gt;</span>
-  <span class="p">{</span><span class="nx">filename</span><span class="p">,</span> <span class="nv">bare: </span><span class="nx">opts</span><span class="p">.</span><span class="nx">bare</span><span class="p">,</span> <span class="nv">header: </span><span class="nx">opts</span><span class="p">.</span><span class="nx">compile</span><span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Start up a new Node.js instance with the arguments in <code>--nodejs</code> passed to
-the <code>node</code> binary, preserving the other options.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">forkNode = </span><span class="o">-&gt;</span>
-  <span class="nv">nodeArgs = </span><span class="nx">opts</span><span class="p">.</span><span class="nx">nodejs</span><span class="p">.</span><span class="nx">split</span> <span class="sr">/\s+/</span>
-  <span class="nv">args     = </span><span class="nx">process</span><span class="p">.</span><span class="nx">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">..]</span>
-  <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span> <span class="nx">args</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;--nodejs&#39;</span><span class="p">),</span> <span class="mi">2</span>
-  <span class="nx">spawn</span> <span class="nx">process</span><span class="p">.</span><span class="nx">execPath</span><span class="p">,</span> <span class="nx">nodeArgs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">args</span><span class="p">),</span>
-    <span class="nv">cwd: </span>       <span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">()</span>
-    <span class="nv">env: </span>       <span class="nx">process</span><span class="p">.</span><span class="nx">env</span>
-    <span class="nv">customFds: </span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Print the <code>--help</code> usage message and exit. Deprecated switches are not
-shown.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">usage = </span><span class="o">-&gt;</span>
-  <span class="nx">printLine</span> <span class="p">(</span><span class="k">new</span> <span class="nx">optparse</span><span class="p">.</span><span class="nx">OptionParser</span> <span class="nx">SWITCHES</span><span class="p">,</span> <span class="nx">BANNER</span><span class="p">).</span><span class="nx">help</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>Print the <code>--version</code> message and exit.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">version = </span><span class="o">-&gt;</span>
-  <span class="nx">printLine</span> <span class="s2">&quot;CoffeeScript version #{CoffeeScript.VERSION}&quot;</span>
+directory can be customized with <code>--output</code>.</p>
+<p>If <code>generatedSourceMap</code> is provided, this will write a <code>.js.map</code> file into the
+same directory as the <code>.js</code> file.</p>
 
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">writeJs</span> = <span class="hljs-params">(base, sourcePath, js, jsPath, generatedSourceMap = <span class="hljs-literal">null</span>)</span> -&gt;</span>
+  sourceMapPath = outputPath sourcePath, base, <span class="hljs-string">".js.map"</span>
+  jsDir  = path.dirname jsPath
+  <span class="hljs-function"><span class="hljs-title">compile</span> = -&gt;</span>
+    <span class="hljs-keyword">if</span> opts.compile
+      js = <span class="hljs-string">' '</span> <span class="hljs-keyword">if</span> js.length &lt;= <span class="hljs-number">0</span>
+      <span class="hljs-keyword">if</span> generatedSourceMap <span class="hljs-keyword">then</span> js = <span class="hljs-string">"<span class="hljs-subst">#{js}</span>\n//# sourceMappingURL=<span class="hljs-subst">#{helpers.baseFileName sourceMapPath, <span class="hljs-literal">no</span>, useWinPathSep}</span>\n"</span>
+      fs.writeFile jsPath, js, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> err
+          printLine err.message
+          process.exit <span class="hljs-number">1</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> opts.compile <span class="hljs-keyword">and</span> opts.watch
+          timeLog <span class="hljs-string">"compiled <span class="hljs-subst">#{sourcePath}</span>"</span>
+    <span class="hljs-keyword">if</span> generatedSourceMap
+      fs.writeFile sourceMapPath, generatedSourceMap, <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+        <span class="hljs-keyword">if</span> err
+          printLine <span class="hljs-string">"Could not write source map: <span class="hljs-subst">#{err.message}</span>"</span>
+          process.exit <span class="hljs-number">1</span>
+  fs.exists jsDir, <span class="hljs-function"><span class="hljs-params">(itExists)</span> -&gt;</span>
+    <span class="hljs-keyword">if</span> itExists <span class="hljs-keyword">then</span> compile() <span class="hljs-keyword">else</span> mkdirp jsDir, compile</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Convenience for cleaner setTimeouts.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">wait</span> = <span class="hljs-params">(milliseconds, func)</span> -&gt;</span> setTimeout func, milliseconds</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>When watching scripts, it’s useful to log changes with the timestamp.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">timeLog</span> = <span class="hljs-params">(message)</span> -&gt;</span>
+  <span class="hljs-built_in">console</span>.log <span class="hljs-string">"<span class="hljs-subst">#{(<span class="hljs-keyword">new</span> Date).toLocaleTimeString()}</span> - <span class="hljs-subst">#{message}</span>"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Pretty-print a stream of tokens, sans location data.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">printTokens</span> = <span class="hljs-params">(tokens)</span> -&gt;</span>
+  strings = <span class="hljs-keyword">for</span> token <span class="hljs-keyword">in</span> tokens
+    tag = token[<span class="hljs-number">0</span>]
+    value = token[<span class="hljs-number">1</span>].toString().replace(<span class="hljs-regexp">/\n/</span>, <span class="hljs-string">'\\n'</span>)
+    <span class="hljs-string">"[<span class="hljs-subst">#{tag}</span> <span class="hljs-subst">#{value}</span>]"</span>
+  printLine strings.join(<span class="hljs-string">' '</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Use the <a href="optparse.html">OptionParser module</a> to extract all options from
+<code>process.argv</code> that are specified in <code>SWITCHES</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">parseOptions</span> = -&gt;</span>
+  optionParser  = <span class="hljs-keyword">new</span> optparse.OptionParser SWITCHES, BANNER
+  o = opts      = optionParser.parse process.argv[<span class="hljs-number">2.</span>.]
+  o.compile     <span class="hljs-keyword">or</span>=  !!o.output
+  o.run         = <span class="hljs-keyword">not</span> (o.compile <span class="hljs-keyword">or</span> o.<span class="hljs-built_in">print</span> <span class="hljs-keyword">or</span> o.map)
+  o.<span class="hljs-built_in">print</span>       = !!  (o.<span class="hljs-built_in">print</span> <span class="hljs-keyword">or</span> (o.eval <span class="hljs-keyword">or</span> o.stdio <span class="hljs-keyword">and</span> o.compile))</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>The compile-time options to pass to the CoffeeScript compiler.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">compileOptions</span> = <span class="hljs-params">(filename, base)</span> -&gt;</span>
+  answer = {
+    filename
+    <span class="hljs-attribute">literate</span>: opts.literate <span class="hljs-keyword">or</span> helpers.isLiterate(filename)
+    <span class="hljs-attribute">bare</span>: opts.bare
+    <span class="hljs-attribute">header</span>: opts.compile <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> opts[<span class="hljs-string">'no-header'</span>]
+    <span class="hljs-attribute">sourceMap</span>: opts.map
+  }
+  <span class="hljs-keyword">if</span> filename
+    <span class="hljs-keyword">if</span> base
+      cwd = process.cwd()
+      jsPath = outputPath filename, base
+      jsDir = path.dirname jsPath
+      answer = helpers.merge answer, {
+        jsPath
+        <span class="hljs-attribute">sourceRoot</span>: path.relative jsDir, cwd
+        <span class="hljs-attribute">sourceFiles</span>: [path.relative cwd, filename]
+        <span class="hljs-attribute">generatedFile</span>: helpers.baseFileName(jsPath, <span class="hljs-literal">no</span>, useWinPathSep)
+      }
+    <span class="hljs-keyword">else</span>
+      answer = helpers.merge answer,
+        <span class="hljs-attribute">sourceRoot</span>: <span class="hljs-string">""</span>
+        <span class="hljs-attribute">sourceFiles</span>: [helpers.baseFileName filename, <span class="hljs-literal">no</span>, useWinPathSep]
+        <span class="hljs-attribute">generatedFile</span>: helpers.baseFileName(filename, <span class="hljs-literal">yes</span>, useWinPathSep) + <span class="hljs-string">".js"</span>
+  answer</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Start up a new Node.js instance with the arguments in <code>--nodejs</code> passed to
+the <code>node</code> binary, preserving the other options.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">forkNode</span> = -&gt;</span>
+  nodeArgs = opts.nodejs.split <span class="hljs-regexp">/\s+/</span>
+  args     = process.argv[<span class="hljs-number">1.</span>.]
+  args.splice args.indexOf(<span class="hljs-string">'--nodejs'</span>), <span class="hljs-number">2</span>
+  p = spawn process.execPath, nodeArgs.concat(args),
+    <span class="hljs-attribute">cwd</span>:        process.cwd()
+    <span class="hljs-attribute">env</span>:        process.env
+    <span class="hljs-attribute">stdio</span>:      [<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>]
+  p.<span class="hljs-literal">on</span> <span class="hljs-string">'exit'</span>, <span class="hljs-function"><span class="hljs-params">(code)</span> -&gt;</span> process.exit code</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Print the <code>--help</code> usage message and exit. Deprecated switches are not
+shown.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">usage</span> = -&gt;</span>
+  printLine (<span class="hljs-keyword">new</span> optparse.OptionParser SWITCHES, BANNER).help()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Print the <code>--version</code> message and exit.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">version</span> = -&gt;</span>
+  printLine <span class="hljs-string">"CoffeeScript version <span class="hljs-subst">#{CoffeeScript.VERSION}</span>"</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

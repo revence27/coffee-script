@@ -2,7 +2,7 @@
 # -------
 
 # pull the helpers from `CoffeeScript.helpers` into local variables
-{starts, ends, compact, count, merge, extend, flatten, del, last} = CoffeeScript.helpers
+{starts, ends, repeat, compact, count, merge, extend, flatten, del, baseFileName} = CoffeeScript.helpers
 
 
 # `starts`
@@ -27,6 +27,15 @@ test "the `ends` helper can take an optional offset", ->
   ok not ends('01234', '234', 6)
 
 
+# `repeat`
+
+test "the `repeat` helper concatenates a given number of times", ->
+  eq 'asdasdasd', repeat('asd', 3)
+
+test "`repeat`ing a string 0 times always returns the empty string", ->
+  eq '', repeat('whatever', 0)
+
+
 # `compact`
 
 test "the `compact` helper removes falsey values from an array, preserves truthy ones", ->
@@ -37,7 +46,7 @@ test "the `compact` helper removes falsey values from an array, preserves truthy
 
 # `count`
 
-test "the `count` helper counts the number of occurances of a string in another string", ->
+test "the `count` helper counts the number of occurrences of a string in another string", ->
   eq 1/0, count('abc', '')
   eq 0, count('abc', 'z')
   eq 1, count('abc', 'a')
@@ -85,12 +94,32 @@ test "the `del` helper deletes a property from an object and returns the deleted
   ok 1 not of obj
 
 
-# `last`
+# `baseFileName`
 
-test "the `last` helper returns the last item of an array-like object", ->
-  ary = [0, 1, 2, 3, 4]
-  eq 4, last(ary)
+test "the `baseFileName` helper returns the file name to write to", ->
+  ext = '.js'
+  sourceToCompiled =
+    '.coffee': ext
+    'a.coffee': 'a' + ext
+    'b.coffee': 'b' + ext
+    'coffee.coffee': 'coffee' + ext
 
-test "the `last` helper allows one to specify an optional offset", ->
-  ary = [0, 1, 2, 3, 4]
-  eq 2, last(ary, 2)
+    '.litcoffee': ext
+    'a.litcoffee': 'a' + ext
+    'b.litcoffee': 'b' + ext
+    'coffee.litcoffee': 'coffee' + ext
+
+    '.lit': ext
+    'a.lit': 'a' + ext
+    'b.lit': 'b' + ext
+    'coffee.lit': 'coffee' + ext
+
+    '.coffee.md': ext
+    'a.coffee.md': 'a' + ext
+    'b.coffee.md': 'b' + ext
+    'coffee.coffee.md': 'coffee' + ext
+
+  for sourceFileName, expectedFileName of sourceToCompiled
+    name = baseFileName sourceFileName, yes
+    filename = name + ext
+    eq filename, expectedFileName
